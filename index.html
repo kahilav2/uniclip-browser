@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fa2c80">
+  <meta property="og:title" content="Uniclip - Your Decentralized Clipboard">
+  <meta property="og:description" content="Uniclip is a secure multi-platform application that enables seamless sharing of clipboard contents across devices.">
+  <meta property="og:image" content="https://uniclip.app/assets/icon-192x192.png">
+  <meta property="og:url" content="https://uniclip.app/web">
+  <title>Uniclip</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
+
+  <script src="./assets/web3.min.js"></script>
+  <script src="./assets/qrcode.min.js"></script>
+  <script src="./assets/jsQR.js"></script>
+  <script src="./assets/streamr-chunker.bundle.js"></script>
+  <script src="./assets/streamr-client.web.js"></script>
+</head>
+<body>
+  <script>
+    // onload
+    if ('serviceWorker' in navigator) {
+      console.log("service worker supported")
+      window.addEventListener('load', () => {
+        console.log("window loaded")
+        async function detectSWUpdate() {
+          console.log("detecting SW update")
+          const registration = await navigator.serviceWorker.ready;
+
+          registration.addEventListener("updatefound", event => {
+            console.log("update found!!")
+            const newSW = registration.installing;
+            newSW.addEventListener("statechange", event => {
+              console.log("state change")
+              if (newSW.state == "installed") {
+                console.log("new service worker installed!!")
+                newSW.postMessage({ action: "purgeCache" });
+                // window.location.reload();
+                // New service worker is installed, but waiting activation
+              }
+            });
+          })
+        }
+        detectSWUpdate();
+      });
+    }
+   
+  </script>
+  <div id="app"></div>
+  <script src="./assets/vue.global.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
