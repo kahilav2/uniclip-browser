@@ -229,7 +229,7 @@ export default {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'image.png'; // Replace this with your desired file name
+        link.download = 'image.png';
         link.click();
         URL.revokeObjectURL(url);
       },
@@ -238,7 +238,7 @@ export default {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = fileName; // Replace this with your desired file name
+        link.download = fileName;
         link.click();
         URL.revokeObjectURL(url);
       },
@@ -303,7 +303,6 @@ export default {
         reader.readAsDataURL(file);
         reader.onload = async () => {
           const base64String = reader.result.substring(reader.result.indexOf(',') + 1);
-          console.log(base64String);
           await this.messageController.upload({
             type: "file",
             contentType: file.type,
@@ -327,14 +326,14 @@ export default {
         }
 
         if (!blob) {
-          // clipboard had text
+          // clipboard contained text
           const message = await navigator.clipboard.readText()
           this.messageInput = message
 
           this.sendMessage()
           return 
         }
-        //clipboard had image
+        // clipboard contained an image
         var reader = new FileReader();
         reader.readAsDataURL(blob);
         reader.onloadend = async () => {
@@ -401,11 +400,10 @@ export default {
         this.streamrChunker = new StreamrChunker.StreamrChunker()
           .withDeviceId(this.deviceId)
           .withIgnoreOwnMessages()
-          .withMaxMessageSize(15000)
+          .withMaxMessageSize(16000)
           .withTimeBetweenPublishedChunks(1)
         this.streamrChunker.on("publish", async (msg) => { 
           try {
-            console.log("publishing a msg" )
             await this.streamrCli.publish(this.streamUrl, msg)
           } catch(err) {
             console.log(err)
@@ -420,7 +418,6 @@ export default {
             }
         })
         this.streamrChunker.on("chunk-update", (chunkStatuses) => {
-          console.log(chunkStatuses)
           this.loadedFiles = chunkStatuses
         })
         try {
@@ -429,7 +426,7 @@ export default {
               privateKey: this.privateKey
             },
             network: {
-              webrtcMaxMessageSize: 16000, // 1000000// 1048576
+              webrtcMaxMessageSize: 256000,
               webrtcSendBufferMaxMessageCount: 2000,
             }
             // encryption: {
@@ -458,7 +455,6 @@ export default {
             id: this.streamUrl,
             ...(isStoredStream ? { resend: { last: 10 }} : {})
           }, (msg) => {
-            console.log("received msg")
             try {
               this.streamrChunker.receiveHandler(msg)
             } catch(err) {
