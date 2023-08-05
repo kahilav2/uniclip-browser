@@ -13,6 +13,6 @@
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "streamr-chunker": "^0.1.2-beta.0",
-    "streamr-client": "^8.5.0"
+    "streamr-client": "^8.5.5"
   }
 }
